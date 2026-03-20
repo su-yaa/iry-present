@@ -12,3 +12,18 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 });
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: 'Missing history ID' }, { status: 400 });
+    }
+    
+    await prisma.history.delete({ where: { id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete history' }, { status: 500 });
+  }
+}
