@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
+import styles from './page.module.css';
+import { MESSAGES } from '../lib/messages';
 
 export default function Home() {
   const [coins, setCoins] = useState(0);
@@ -16,7 +18,7 @@ export default function Home() {
 
   const startDraw = async () => {
     if (isDrawing || coins < 1) {
-      if (coins < 1) alert("코인이 부족합니다! 애교 부리고 충전을 요구하세요 🥺");
+      if (coins < 1) alert(MESSAGES.DRAW.NOT_ENOUGH_COINS);
       return;
     }
     
@@ -39,47 +41,48 @@ export default function Home() {
   };
 
   return (
-    <div className="app-container">
-      <div className="coin-badge">✨ 내 코인: {coins}개</div>
+    <div className={styles.container}>
+      <div className={styles.coinBadge}>✨ 내 코인: {coins}개</div>
       
-      <div className="header">
+      <div className={styles.header}>
         <h1>🎁 랜덤 선물 뽑기 🎁</h1>
         <p>코인 1개를 내고 뽑아봐요!</p>
       </div>
 
-      <div className={`gift-box-container ${isDrawing ? 'shake' : ''}`} onClick={startDraw}>
-        <div className="gift-box" />
+      <div className={`${styles.giftBoxContainer} ${isDrawing ? styles.shake : ''}`} onClick={startDraw}>
+        <div className={styles.giftBox} />
       </div>
 
-      <button className="draw-btn" onClick={startDraw} disabled={isDrawing || coins < 1}>
-        {isDrawing ? '✨ 두근두근... ✨' : '💖 오늘의 혜택 뽑기! 💖'}
+      <button className={styles.drawBtn} onClick={startDraw} disabled={isDrawing || coins < 1}>
+        {isDrawing ? MESSAGES.DRAW.DRAWING : MESSAGES.DRAW.BUTTON_IDLE}
       </button>
 
-      <div className="coupon-list-title">🎁 현재 뽑을 수 있는 상품들 🎁</div>
-      <div className="coupon-list-container">
-        {items.length === 0 ? <p style={{color:'var(--text-muted)', margin:'auto'}}>준비된 상품이 없습니다.</p> : items.map(item => (
-          <div key={item.id} className="coupon-item">
-            <div className="coupon-item-icon">{item.icon}</div>
-            <div className="coupon-item-title">{item.title}</div>
+      <div className={styles.couponListTitle}>🎁 현재 뽑을 수 있는 상품들 🎁</div>
+      <div className={styles.couponListContainer}>
+        {items.length === 0 ? <p className={styles.emptyText}>{MESSAGES.DRAW.EMPTY_ITEMS}</p> : items.map(item => (
+          <div key={item.id} className={styles.couponItem}>
+            <div className={styles.couponItemIcon}>{item.icon}</div>
+            <div className={styles.couponItemTitle}>{item.title}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ marginTop: '10px', display: 'flex', gap: '12px' }}>
-         <Link href="/suggest" className="action-link">✨ 새 쿠폰 조르기</Link>
-         <Link href="/admin" className="action-link">🔒 관리자 전용</Link>
+      <div className={styles.linksContainer}>
+         <Link href="/suggest" className={styles.actionLink}>✨ 새 쿠폰 조르기</Link>
+         <Link href="/admin" className={styles.actionLink}>🔒 관리자 전용</Link>
       </div>
 
       {result && (
-        <div className="modal-overlay" onClick={() => setResult(null)}>
-          <div className="coupon-card" onClick={e => e.stopPropagation()}>
-            <div className="coupon-icon">{result.icon}</div>
-            <h2 className="coupon-title">{result.title}</h2>
-            <p className="coupon-desc">{result.description}</p>
-            <button className="primary-btn" onClick={() => setResult(null)}>소중하게 킵하기 ✨</button>
+        <div className={styles.modalOverlay} onClick={() => setResult(null)}>
+          <div className={styles.couponCard} onClick={e => e.stopPropagation()}>
+            <div className={styles.couponIcon}>{result.icon}</div>
+            <h2 className={styles.couponTitle}>{result.title}</h2>
+            <p className={styles.couponDesc}>{result.description}</p>
+            <button className={styles.primaryBtn} onClick={() => setResult(null)}>{MESSAGES.DRAW.KEEP_BUTTON}</button>
           </div>
         </div>
       )}
     </div>
   );
 }
+

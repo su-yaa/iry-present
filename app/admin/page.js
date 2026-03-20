@@ -1,6 +1,8 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import styles from './page.module.css';
+import { MESSAGES } from '../../lib/messages';
 
 export default function Admin() {
   const [auth, setAuth] = useState(false);
@@ -15,7 +17,7 @@ export default function Admin() {
       setAuth(true);
       fetchData();
     } else {
-      alert("접근 거부! 이리 접근 금지 ❌");
+      alert(MESSAGES.ADMIN.ACCESS_DENIED);
       window.location.href = '/';
     }
   };
@@ -45,14 +47,14 @@ export default function Admin() {
       body: JSON.stringify({ id, action })
     });
     if (res.ok) {
-      alert(`처리 완료 (${action})`);
+      alert(MESSAGES.ADMIN.APPROVE_SUCCESS(action));
       fetchData();
     }
   };
 
   if (!auth) {
     return (
-      <div className="login-card glass-card">
+      <div className={styles.loginCard}>
         <h2>🔒 관리자 접속</h2>
         <form onSubmit={handleLogin}>
           <input 
@@ -64,62 +66,62 @@ export default function Admin() {
           />
           <button type="submit">접속하기</button>
         </form>
-        <div style={{ marginTop: '20px' }}>
-          <Link href="/" className="back-link">← 로비로 돌아가기</Link>
+        <div className={styles.backLinkWrapper}>
+          <Link href="/" className={styles.backLink}>← 로비로 돌아가기</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="admin-container">
-      <h1 className="admin-title">👑 전용 관리자</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>👑 전용 관리자</h1>
       
-      <section className="admin-section">
-        <div className="glass-card">
+      <section className={styles.section}>
+        <div className={styles.glassCard}>
           <h2>💰 코인 뱅크</h2>
-          <p>현재 보유량: <strong className="coin-display">{coins}</strong> 코인</p>
-          <div style={{display:'flex', gap:'10px', marginTop:'15px'}}>
-            <button onClick={() => addCoin(1)} className="admin-btn admin-btn-green">이쁜짓! 코인 +1 지급</button>
-            <button onClick={() => addCoin(-1)} className="admin-btn admin-btn-red">코인 -1 차감</button>
+          <p>현재 보유량: <strong className={styles.coinDisplay}>{coins}</strong> 코인</p>
+          <div className={styles.coinActions}>
+            <button onClick={() => addCoin(1)} className={`${styles.btn} ${styles.btnGreen}`}>이쁜짓! 코인 +1 지급</button>
+            <button onClick={() => addCoin(-1)} className={`${styles.btn} ${styles.btnRed}`}>코인 -1 차감</button>
           </div>
         </div>
       </section>
 
-      <section className="admin-section">
-        <div className="glass-card">
+      <section className={styles.section}>
+        <div className={styles.glassCard}>
           <h2>📝 승인 대기열</h2>
-          {pending.length === 0 ? <p style={{color:'var(--text-muted)'}}>새로 조르기 한 항목이 없습니다.</p> : pending.map(item => (
-            <div key={item.id} className="admin-pending-item">
+          {pending.length === 0 ? <p className={styles.emptyText}>{MESSAGES.ADMIN.EMPTY_PENDING}</p> : pending.map(item => (
+            <div key={item.id} className={styles.pendingItem}>
               <div>
-                <span style={{fontSize:'2.5rem'}}>{item.icon}</span>
-                <strong style={{marginLeft:'10px', fontSize:'1.2rem'}} className="text-gradient">{item.title}</strong>
-                <div style={{color:'var(--text-muted)', marginTop:'5px', marginLeft:'10px'}}>{item.description}</div>
+                <span className={styles.pendingIcon}>{item.icon}</span>
+                <strong className={styles.pendingTitle}>{item.title}</strong>
+                <div className={styles.pendingDesc}>{item.description}</div>
               </div>
-              <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-                <button onClick={() => handleApprove(item.id, 'APPROVE')} className="admin-btn admin-btn-pink">수락</button>
-                <button onClick={() => handleApprove(item.id, 'REJECT')} className="admin-btn admin-btn-gray">기각</button>
+              <div className={styles.pendingActions}>
+                <button onClick={() => handleApprove(item.id, 'APPROVE')} className={`${styles.btn} ${styles.btnPink}`}>수락</button>
+                <button onClick={() => handleApprove(item.id, 'REJECT')} className={`${styles.btn} ${styles.btnGray}`}>기각</button>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="admin-section">
-        <div className="glass-card">
+      <section className={styles.section}>
+        <div className={styles.glassCard}>
           <h2>🕵️ 이리 당첨 기록</h2>
-          {history.length === 0 ? <p style={{color:'var(--text-muted)'}}>아직 뽑기 기록이 없습니다.</p> : history.map(h => (
-            <div key={h.id} className="admin-history-item">
-              <span style={{fontSize:'1.5rem'}}>{h.item.icon}</span> 
-              <strong style={{marginLeft:'10px'}}>{h.item.title}</strong>
-              <span style={{color:'var(--text-muted)', marginLeft:'10px', fontSize:'0.9rem'}}>({new Date(h.drawnAt).toLocaleString()})</span>
+          {history.length === 0 ? <p className={styles.emptyText}>{MESSAGES.ADMIN.EMPTY_HISTORY}</p> : history.map(h => (
+            <div key={h.id} className={styles.historyItem}>
+              <span className={styles.historyIcon}>{h.item.icon}</span> 
+              <strong className={styles.historyTitle}>{h.item.title}</strong>
+              <span className={styles.historyDate}>({new Date(h.drawnAt).toLocaleString()})</span>
             </div>
           ))}
         </div>
       </section>
 
-      <div style={{textAlign:'center', marginTop:'30px'}}>
-        <Link href="/" className="back-link">← Home</Link>
+      <div className={styles.backLinkWrapperHome}>
+        <Link href="/" className={styles.backLink}>← Home</Link>
       </div>
     </div>
   );

@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import styles from './page.module.css';
+import { MESSAGES } from '../../lib/messages';
 
 export default function Suggest() {
   const router = useRouter();
@@ -11,7 +13,7 @@ export default function Suggest() {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title) return alert("제목을 입력해주세요!");
+    if (!title) return alert(MESSAGES.SUGGEST.EMPTY_TITLE);
 
     const res = await fetch('/api/items', {
       method: 'POST',
@@ -20,36 +22,36 @@ export default function Suggest() {
     });
 
     if (res.ok) {
-      alert("성공적으로 제안했습니다! 심사를 기다려주세요.");
+      alert(MESSAGES.SUGGEST.SUCCESS);
       router.push('/');
     } else {
-      alert("오류가 발생했습니다.");
+      alert(MESSAGES.SUGGEST.ERROR);
     }
   };
 
   return (
-    <div className="app-container" style={{paddingTop: '30px'}}>
-      <div className="header">
+    <div className={styles.container}>
+      <div className={styles.header}>
         <h1>✨ 상품 조르기 ✨</h1>
         <p>이거 추가해줘!!</p>
       </div>
 
-      <div className="suggest-form">
-        <form onSubmit={handleSubmit} className="glass-card">
-          <label>아이콘 (이모지)</label>
-          <input className="input-field" value={icon} onChange={e => setIcon(e.target.value)} maxLength={2} />
+      <div className={styles.suggestForm}>
+        <form onSubmit={handleSubmit} className={styles.glassCard}>
+          <label className={styles.label}>아이콘 (이모지)</label>
+          <input className={styles.inputField} value={icon} onChange={e => setIcon(e.target.value)} maxLength={2} />
 
-          <label>상품 이름</label>
-          <input className="input-field" value={title} onChange={e => setTitle(e.target.value)} placeholder="예: 샤넬백 사주기" />
+          <label className={styles.label}>상품 이름</label>
+          <input className={styles.inputField} value={title} onChange={e => setTitle(e.target.value)} placeholder="예: 샤넬백 사주기" />
 
-          <label>추가 설명</label>
-          <input className="input-field" value={desc} onChange={e => setDesc(e.target.value)} placeholder="예: 무조건 사줘야 함 거절 불가" />
+          <label className={styles.label}>추가 설명</label>
+          <input className={styles.inputField} value={desc} onChange={e => setDesc(e.target.value)} placeholder="예: 무조건 사줘야 함 거절 불가" />
 
-          <button type="submit" className="primary-btn" style={{marginTop: '5px'}}>제출하고 기다리기 🙏</button>
+          <button type="submit" className={styles.primaryBtn}>{MESSAGES.SUGGEST.SUBMIT_BUTTON}</button>
         </form>
       </div>
 
-      <Link href="/" className="action-link" style={{marginTop: '10px'}}>← 돌아가기</Link>
+      <Link href="/" className={styles.actionLink}>← 돌아가기</Link>
     </div>
   );
 }
