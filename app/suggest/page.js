@@ -34,20 +34,22 @@ export default function Suggest() {
         <p>이거 추가해줘!!</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{width: '90%', background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 5px 15px rgba(255,117,140,0.1)'}}>
-        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ff758c'}}>아이콘 (이모지)</label>
-        <input className="input-field" value={icon} onChange={e => setIcon(e.target.value)} maxLength={2} />
+      <div className="suggest-form">
+        <form onSubmit={handleSubmit} className="glass-card">
+          <label>아이콘 (이모지)</label>
+          <input className="input-field" value={icon} onChange={e => setIcon(e.target.value)} maxLength={2} />
 
-        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ff758c'}}>상품 이름</label>
-        <input className="input-field" value={title} onChange={e => setTitle(e.target.value)} placeholder="예: 샤넬백 사주기" />
+          <label>상품 이름</label>
+          <input className="input-field" value={title} onChange={e => setTitle(e.target.value)} placeholder="예: 샤넬백 사주기" />
 
-        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ff758c'}}>추가 설명</label>
-        <input className="input-field" value={desc} onChange={e => setDesc(e.target.value)} placeholder="예: 무조건 사줘야 함 거절 불가" />
+          <label>추가 설명</label>
+          <input className="input-field" value={desc} onChange={e => setDesc(e.target.value)} placeholder="예: 무조건 사줘야 함 거절 불가" />
 
-        <button type="submit" className="primary-btn">제출하고 기다리기 🙏</button>
-      </form>
+          <button type="submit" className="primary-btn" style={{marginTop: '5px'}}>제출하고 기다리기 🙏</button>
+        </form>
+      </div>
 
-      <Link href="/" className="action-link" style={{marginTop: '20px'}}>돌아가기</Link>
+      <Link href="/" className="action-link" style={{marginTop: '10px'}}>← 돌아가기</Link>
     </div>
   );
 }

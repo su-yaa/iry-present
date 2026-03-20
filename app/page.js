@@ -29,9 +29,9 @@ export default function Home() {
       setTimeout(() => {
         setResult(data.item);
         setCoins(data.coinsRemaining);
-        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#ff758c', '#ff7eb3', '#ffdb58', '#fff'] });
+        confetti({ particleCount: 200, spread: 120, origin: { y: 0.6 }, colors: ['#ff758c', '#ff7eb3', '#a855f7', '#fbbf24', '#fff'] });
         setIsDrawing(false);
-      }, 1000);
+      }, 1200);
     } else {
       alert(data.error);
       setIsDrawing(false);
@@ -40,7 +40,7 @@ export default function Home() {
 
   return (
     <div className="app-container">
-      <div className="coin-badge">💰 내 코인: {coins}개</div>
+      <div className="coin-badge">✨ 내 코인: {coins}개</div>
       
       <div className="header">
         <h1>🎁 랜덤 선물 뽑기 🎁</h1>
@@ -52,12 +52,12 @@ export default function Home() {
       </div>
 
       <button className="draw-btn" onClick={startDraw} disabled={isDrawing || coins < 1}>
-        {isDrawing ? '두근두근...' : '💖 오늘의 혜택 뽑기! 💖'}
+        {isDrawing ? '✨ 두근두근... ✨' : '💖 오늘의 혜택 뽑기! 💖'}
       </button>
 
       <div className="coupon-list-title">🎁 현재 뽑을 수 있는 상품들 🎁</div>
       <div className="coupon-list-container">
-        {items.length === 0 ? <p style={{color:'#7a6b6e', margin:'auto'}}>준비된 상품이 없습니다.</p> : items.map(item => (
+        {items.length === 0 ? <p style={{color:'var(--text-muted)', margin:'auto'}}>준비된 상품이 없습니다.</p> : items.map(item => (
           <div key={item.id} className="coupon-item">
             <div className="coupon-item-icon">{item.icon}</div>
             <div className="coupon-item-title">{item.title}</div>
@@ -65,9 +65,9 @@ export default function Home() {
         ))}
       </div>
 
-      <div style={{ marginTop: '20px', display: 'flex', gap: '15px' }}>
+      <div style={{ marginTop: '10px', display: 'flex', gap: '12px' }}>
          <Link href="/suggest" className="action-link">✨ 새 쿠폰 조르기</Link>
-         <Link href="/admin" className="action-link" style={{background: 'rgba(0,0,0,0.05)'}}>🔒 관리자 전용</Link>
+         <Link href="/admin" className="action-link">🔒 관리자 전용</Link>
       </div>
 
       {result && (

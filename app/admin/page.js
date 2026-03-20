@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function Admin() {
@@ -46,75 +46,80 @@ export default function Admin() {
     });
     if (res.ok) {
       alert(`처리 완료 (${action})`);
-      fetchData(); // refresh
+      fetchData();
     }
   };
 
   if (!auth) {
     return (
-      <div style={{ padding: '20px', maxWidth: '400px', margin: '50px auto', textAlign: 'center', fontFamily: 'sans-serif' }}>
-        <h2 style={{ color: '#ff758c', marginBottom: '20px' }}>🔒 관리자 접속</h2>
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div className="login-card glass-card">
+        <h2>🔒 관리자 접속</h2>
+        <form onSubmit={handleLogin}>
           <input 
             type="password" 
             value={passwordInput} 
             onChange={e => setPasswordInput(e.target.value)} 
-            placeholder="비밀번호를 입력하세요" 
-            style={{ padding: '12px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc' }}
+            placeholder="비밀번호를 입력하세요"
             autoFocus
           />
-          <button type="submit" style={{ padding: '12px', background: '#ff758c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>접속하기</button>
+          <button type="submit">접속하기</button>
         </form>
         <div style={{ marginTop: '20px' }}>
-          <Link href="/" style={{ color: '#aaa', textDecoration: 'none' }}>← 로비로 돌아가기</Link>
+          <Link href="/" className="back-link">← 로비로 돌아가기</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1 style={{color:'#ff758c', borderBottom:'2px solid #ffccd5', paddingBottom:'10px'}}>👑 전용 관리자</h1>
+    <div className="admin-container">
+      <h1 className="admin-title">👑 전용 관리자</h1>
       
-      <section style={{margin:'20px 0', background:'#fff', padding:'20px', borderRadius:'15px', boxShadow:'0 4px 10px rgba(0,0,0,0.1)'}}>
-        <h2>💰 코인 뱅크</h2>
-        <p>현재 보유량: <strong style={{fontSize:'1.5rem', color:'#ff758c'}}>{coins}</strong> 코인</p>
-        <div style={{display:'flex', gap:'10px', marginTop:'15px'}}>
-          <button onClick={() => addCoin(1)} style={{padding:'10px', background:'#28a745', color:'white', border:'none', borderRadius:'5px', cursor:'pointer', fontWeight:'bold'}}>이쁜짓! 코인 +1 지급</button>
-          <button onClick={() => addCoin(-1)} style={{padding:'10px', background:'#dc3545', color:'white', border:'none', borderRadius:'5px', cursor:'pointer'}}>코인 -1 차감</button>
+      <section className="admin-section">
+        <div className="glass-card">
+          <h2>💰 코인 뱅크</h2>
+          <p>현재 보유량: <strong className="coin-display">{coins}</strong> 코인</p>
+          <div style={{display:'flex', gap:'10px', marginTop:'15px'}}>
+            <button onClick={() => addCoin(1)} className="admin-btn admin-btn-green">이쁜짓! 코인 +1 지급</button>
+            <button onClick={() => addCoin(-1)} className="admin-btn admin-btn-red">코인 -1 차감</button>
+          </div>
         </div>
       </section>
 
-      <section style={{margin:'20px 0', background:'#fff', padding:'20px', borderRadius:'15px', boxShadow:'0 4px 10px rgba(0,0,0,0.1)'}}>
-        <h2>📝 승인 대기열</h2>
-        {pending.length === 0 ? <p style={{color:'#666'}}>새로 조르기 한 항목이 없습니다.</p> : pending.map(item => (
-          <div key={item.id} style={{border:'2px dashed #ffccd5', padding:'15px', borderRadius:'10px', margin:'10px 0', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <div>
-              <span style={{fontSize:'2.5rem'}}>{item.icon}</span>
-              <strong style={{marginLeft:'10px', fontSize:'1.2rem', color:'#ff758c'}}>{item.title}</strong>
-              <div style={{color:'#666', marginTop:'5px', marginLeft:'10px'}}>{item.description}</div>
+      <section className="admin-section">
+        <div className="glass-card">
+          <h2>📝 승인 대기열</h2>
+          {pending.length === 0 ? <p style={{color:'var(--text-muted)'}}>새로 조르기 한 항목이 없습니다.</p> : pending.map(item => (
+            <div key={item.id} className="admin-pending-item">
+              <div>
+                <span style={{fontSize:'2.5rem'}}>{item.icon}</span>
+                <strong style={{marginLeft:'10px', fontSize:'1.2rem'}} className="text-gradient">{item.title}</strong>
+                <div style={{color:'var(--text-muted)', marginTop:'5px', marginLeft:'10px'}}>{item.description}</div>
+              </div>
+              <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+                <button onClick={() => handleApprove(item.id, 'APPROVE')} className="admin-btn admin-btn-pink">수락</button>
+                <button onClick={() => handleApprove(item.id, 'REJECT')} className="admin-btn admin-btn-gray">기각</button>
+              </div>
             </div>
-            <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-              <button onClick={() => handleApprove(item.id, 'APPROVE')} style={{padding:'8px 20px', background:'#ff7eb3', color:'white', border:'none', borderRadius:'5px', cursor:'pointer', fontWeight:'bold'}}>수락</button>
-              <button onClick={() => handleApprove(item.id, 'REJECT')} style={{padding:'8px 20px', background:'#999', color:'white', border:'none', borderRadius:'5px', cursor:'pointer'}}>기각</button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
 
-      <section style={{margin:'20px 0', background:'#fff', padding:'20px', borderRadius:'15px', boxShadow:'0 4px 10px rgba(0,0,0,0.1)'}}>
-        <h2>🕵️ 이리 당첨 기록</h2>
-        {history.length === 0 ? <p style={{color:'#666'}}>아직 뽑기 기록이 없습니다.</p> : history.map(h => (
-          <div key={h.id} style={{padding:'10px', borderBottom:'1px solid #eee', display:'flex', alignItems:'center'}}>
-            <span style={{fontSize:'1.5rem'}}>{h.item.icon}</span> 
-            <strong style={{marginLeft:'10px'}}>{h.item.title}</strong>
-            <span style={{color:'#aaa', marginLeft:'10px', fontSize:'0.9rem'}}>({new Date(h.drawnAt).toLocaleString()})</span>
-          </div>
-        ))}
+      <section className="admin-section">
+        <div className="glass-card">
+          <h2>🕵️ 이리 당첨 기록</h2>
+          {history.length === 0 ? <p style={{color:'var(--text-muted)'}}>아직 뽑기 기록이 없습니다.</p> : history.map(h => (
+            <div key={h.id} className="admin-history-item">
+              <span style={{fontSize:'1.5rem'}}>{h.item.icon}</span> 
+              <strong style={{marginLeft:'10px'}}>{h.item.title}</strong>
+              <span style={{color:'var(--text-muted)', marginLeft:'10px', fontSize:'0.9rem'}}>({new Date(h.drawnAt).toLocaleString()})</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <div style={{textAlign:'center', marginTop:'30px'}}>
-        <Link href="/" style={{color:'#ff758c', textDecoration:'none', fontWeight:'bold', display:'inline-block'}}>Home</Link>
+        <Link href="/" className="back-link">← Home</Link>
       </div>
     </div>
   );
