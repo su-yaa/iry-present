@@ -7,18 +7,18 @@ export default function Admin() {
   const [pending, setPending] = useState([]);
   const [history, setHistory] = useState([]);
   const [coins, setCoins] = useState(0);
+  const [passwordInput, setPasswordInput] = useState("");
 
-  useEffect(() => {
-    // Simple lock
-    const pw = prompt("관리자 비밀번호를 입력하세요");
-    if (pw === '1234') { // hardcoded for simple use
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (passwordInput === '1234') {
       setAuth(true);
       fetchData();
     } else {
-      alert("접근 거부! 여친 접근 금지 ❌");
+      alert("접근 거부! 이리 접근 금지 ❌");
       window.location.href = '/';
     }
-  }, []);
+  };
 
   const fetchData = async () => {
     fetch('/api/coins').then(r => r.json()).then(d => setCoins(d.coins));
@@ -50,14 +50,34 @@ export default function Admin() {
     }
   };
 
-  if (!auth) return <div style={{padding:'20px'}}>인증 중...</div>;
+  if (!auth) {
+    return (
+      <div style={{ padding: '20px', maxWidth: '400px', margin: '50px auto', textAlign: 'center', fontFamily: 'sans-serif' }}>
+        <h2 style={{ color: '#ff758c', marginBottom: '20px' }}>🔒 관리자 접속</h2>
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <input 
+            type="password" 
+            value={passwordInput} 
+            onChange={e => setPasswordInput(e.target.value)} 
+            placeholder="비밀번호를 입력하세요" 
+            style={{ padding: '12px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc' }}
+            autoFocus
+          />
+          <button type="submit" style={{ padding: '12px', background: '#ff758c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>접속하기</button>
+        </form>
+        <div style={{ marginTop: '20px' }}>
+          <Link href="/" style={{ color: '#aaa', textDecoration: 'none' }}>← 로비로 돌아가기</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <h1 style={{color:'#ff758c', borderBottom:'2px solid #ffccd5', paddingBottom:'10px'}}>👑 전용 관리자</h1>
       
       <section style={{margin:'20px 0', background:'#fff', padding:'20px', borderRadius:'15px', boxShadow:'0 4px 10px rgba(0,0,0,0.1)'}}>
-        <h2>💰 여친 코인 뱅크</h2>
+        <h2>💰 코인 뱅크</h2>
         <p>현재 보유량: <strong style={{fontSize:'1.5rem', color:'#ff758c'}}>{coins}</strong> 코인</p>
         <div style={{display:'flex', gap:'10px', marginTop:'15px'}}>
           <button onClick={() => addCoin(1)} style={{padding:'10px', background:'#28a745', color:'white', border:'none', borderRadius:'5px', cursor:'pointer', fontWeight:'bold'}}>이쁜짓! 코인 +1 지급</button>
@@ -66,7 +86,7 @@ export default function Admin() {
       </section>
 
       <section style={{margin:'20px 0', background:'#fff', padding:'20px', borderRadius:'15px', boxShadow:'0 4px 10px rgba(0,0,0,0.1)'}}>
-        <h2>📝 조르기 승인 대기열</h2>
+        <h2>📝 승인 대기열</h2>
         {pending.length === 0 ? <p style={{color:'#666'}}>새로 조르기 한 항목이 없습니다.</p> : pending.map(item => (
           <div key={item.id} style={{border:'2px dashed #ffccd5', padding:'15px', borderRadius:'10px', margin:'10px 0', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
@@ -83,7 +103,7 @@ export default function Admin() {
       </section>
 
       <section style={{margin:'20px 0', background:'#fff', padding:'20px', borderRadius:'15px', boxShadow:'0 4px 10px rgba(0,0,0,0.1)'}}>
-        <h2>🕵️ 여친 당첨 감시(?) 기록</h2>
+        <h2>🕵️ 이리 당첨 기록</h2>
         {history.length === 0 ? <p style={{color:'#666'}}>아직 뽑기 기록이 없습니다.</p> : history.map(h => (
           <div key={h.id} style={{padding:'10px', borderBottom:'1px solid #eee', display:'flex', alignItems:'center'}}>
             <span style={{fontSize:'1.5rem'}}>{h.item.icon}</span> 
@@ -94,7 +114,7 @@ export default function Admin() {
       </section>
 
       <div style={{textAlign:'center', marginTop:'30px'}}>
-        <Link href="/" style={{color:'#ff758c', textDecoration:'none', fontWeight:'bold', display:'inline-block'}}>← 로비로 도망가기</Link>
+        <Link href="/" style={{color:'#ff758c', textDecoration:'none', fontWeight:'bold', display:'inline-block'}}>Home</Link>
       </div>
     </div>
   );
