@@ -54,7 +54,7 @@ export default function Admin() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === '1234') {
+    if (passwordInput === '01041515959') {
       setAuth(true);
       fetchData();
     } else {
@@ -100,7 +100,7 @@ export default function Admin() {
     if (newItemInputType === 'image' && !newItemIcon) return setAdminErrorMsg("⚠️ 상품 이미지를 업로드해주세요.");
     if (newItemInputType === 'emoji' && !newItemIcon) return setAdminErrorMsg("⚠️ 상품 이모지를 입력해주세요.");
     if (!newItemTitle.trim()) return setAdminErrorMsg("⚠️ 상품 이름을 입력해주세요.");
-    
+
     const res = await fetch('/api/admin/add-item', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -156,10 +156,10 @@ export default function Admin() {
       <div className={styles.loginCard}>
         <h2>🔒 관리자 접속</h2>
         <form onSubmit={handleLogin}>
-          <input 
-            type="password" 
-            value={passwordInput} 
-            onChange={e => setPasswordInput(e.target.value)} 
+          <input
+            type="password"
+            value={passwordInput}
+            onChange={e => setPasswordInput(e.target.value)}
             placeholder="비밀번호를 입력하세요"
             autoFocus
           />
@@ -178,55 +178,55 @@ export default function Admin() {
         <Link href="/" className={styles.backLink}>← Home</Link>
       </div>
       <h1 className={styles.title}>👑 전용 관리자</h1>
-      
+
       <section className={styles.section}>
         <div className={styles.glassCard}>
           <h2>⚙️ 새 상품 직접 추가</h2>
           <form onSubmit={handleAddItem} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
             {adminErrorMsg && <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.9rem' }}>{adminErrorMsg}</div>}
             <div style={{ display: 'flex', gap: '10px' }}>
-               <button type="button" onClick={() => { setNewItemInputType('image'); setNewItemIcon(''); }} className={styles.btn} style={{ flex: 1, padding: '8px', backgroundColor: newItemInputType === 'image' ? 'var(--primary)' : '#ccc' }}>이미지</button>
-               <button type="button" onClick={() => { setNewItemInputType('emoji'); setNewItemIcon(''); }} className={styles.btn} style={{ flex: 1, padding: '8px', backgroundColor: newItemInputType === 'emoji' ? 'var(--primary)' : '#ccc' }}>이모지</button>
+              <button type="button" onClick={() => { setNewItemInputType('image'); setNewItemIcon(''); }} className={styles.btn} style={{ flex: 1, padding: '8px', backgroundColor: newItemInputType === 'image' ? 'var(--primary)' : '#ccc' }}>이미지</button>
+              <button type="button" onClick={() => { setNewItemInputType('emoji'); setNewItemIcon(''); }} className={styles.btn} style={{ flex: 1, padding: '8px', backgroundColor: newItemInputType === 'emoji' ? 'var(--primary)' : '#ccc' }}>이모지</button>
             </div>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-               {newItemInputType === 'image' ? (
-                 <>
-                   <label>상품 이미지 (필수)</label>
-                   <input 
-                     id="adminFileInput" type="file" accept="image/*" onChange={handleImageUpload}
-                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
-                   />
-                 </>
-               ) : (
-                 <>
-                   <label>상품 이모지 (필수)</label>
-                   <input 
-                     value={newItemIcon} onChange={e => setNewItemIcon(e.target.value)} maxLength={2} placeholder="" 
-                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)', fontSize: '1.5rem', textAlign: 'center' }} 
-                   />
-                 </>
-               )}
-               
-               {newItemIcon && newItemIcon.startsWith('data:image') && (
-                 <img src={newItemIcon} alt="preview" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px' }} />
-               )}
-               <input 
-                 value={newItemTitle} onChange={e => setNewItemTitle(e.target.value)} 
-                 placeholder="상품 이름" 
-                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
-               />
+              {newItemInputType === 'image' ? (
+                <>
+                  <label>상품 이미지 (필수)</label>
+                  <input
+                    id="adminFileInput" type="file" accept="image/*" onChange={handleImageUpload}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <label>상품 이모지 (필수)</label>
+                  <input
+                    value={newItemIcon} onChange={e => setNewItemIcon(e.target.value)} maxLength={2} placeholder=""
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)', fontSize: '1.5rem', textAlign: 'center' }}
+                  />
+                </>
+              )}
+
+              {newItemIcon && newItemIcon.startsWith('data:image') && (
+                <img src={newItemIcon} alt="preview" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px' }} />
+              )}
+              <input
+                value={newItemTitle} onChange={e => setNewItemTitle(e.target.value)}
+                placeholder="상품 이름"
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
+              />
             </div>
-            <input 
-              value={newItemDesc} onChange={e => setNewItemDesc(e.target.value)} 
-              placeholder="추가 설명 (선택사항)" 
+            <input
+              value={newItemDesc} onChange={e => setNewItemDesc(e.target.value)}
+              placeholder="추가 설명 (선택사항)"
               style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
             />
             <button type="submit" className={`${styles.btn} ${styles.btnGreen}`} style={{ alignSelf: 'flex-end', marginTop: '5px' }}>추가하기</button>
           </form>
         </div>
       </section>
-      
+
       <section className={styles.section}>
         <div className={styles.glassCard}>
           <h2>💰 코인 뱅크</h2>
@@ -291,7 +291,7 @@ export default function Admin() {
               {history.slice((historyPage - 1) * 10, historyPage * 10).map(h => (
                 <div key={h.id} className={styles.historyItem} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className={styles.historyIcon}>{renderIcon(h.item.icon)}</span> 
+                    <span className={styles.historyIcon}>{renderIcon(h.item.icon)}</span>
                     <strong className={styles.historyTitle}>{h.item.title}</strong>
                     <span className={styles.historyDate}>({new Date(h.drawnAt).toLocaleString()})</span>
                   </div>
@@ -300,16 +300,16 @@ export default function Admin() {
               ))}
               {history.length > 10 && (
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '15px' }}>
-                  <button 
-                    disabled={historyPage === 1} 
+                  <button
+                    disabled={historyPage === 1}
                     onClick={() => setHistoryPage(p => p - 1)}
                     className={`${styles.btn} ${styles.btnGray}`} style={{ padding: '8px 12px', flex: '0 0 auto' }}
                   >
                     이전
                   </button>
                   <span style={{ margin: 'auto 0', fontWeight: 'bold' }}>{historyPage} / {Math.ceil(history.length / 10)}</span>
-                  <button 
-                    disabled={historyPage >= Math.ceil(history.length / 10)} 
+                  <button
+                    disabled={historyPage >= Math.ceil(history.length / 10)}
                     onClick={() => setHistoryPage(p => p + 1)}
                     className={`${styles.btn} ${styles.btnGray}`} style={{ padding: '8px 12px', flex: '0 0 auto' }}
                   >
@@ -326,7 +326,7 @@ export default function Admin() {
         <div className={styles.glassCard} style={{ borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
           <h2 style={{ color: '#ef4444' }}>⚠️ 위험 구역</h2>
           <p style={{ color: 'var(--text-muted)' }}>모든 상품과 당첨 기록들이 영구적으로 삭제됩니다.</p>
-          <button 
+          <button
             onClick={async () => {
               if (window.confirm("정말로 모든 상품(승인 대기열 포함)과 당첨 기록을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
                 const res = await fetch('/api/admin/reset-items', { method: 'POST' });
@@ -338,7 +338,7 @@ export default function Admin() {
                   alert("초기화에 실패했습니다.");
                 }
               }
-            }} 
+            }}
             className={`${styles.btn} ${styles.btnRed}`}
             style={{ marginTop: '15px', width: '100%' }}
           >
