@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -12,6 +12,34 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [showRoulette, setShowRoulette] = useState(false);
   const [rouletteRotation, setRouletteRotation] = useState(0);
+
+  const scrollRef = useRef(null);
+  const [isDraggingList, setIsDraggingList] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const startDrag = (e) => {
+    setIsDraggingList(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+  const stopDrag = () => setIsDraggingList(false);
+  const onDrag = (e) => {
+    if (!isDraggingList) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
+
+  const scrollLeftClick = () => {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+  };
+  const scrollRightClick = () => {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+  };
 
   const renderIcon = (iconStr, type) => {
     if (iconStr && iconStr.startsWith('data:image')) {
@@ -91,13 +119,25 @@ export default function Home() {
       </button>
 
       <div className={styles.couponListTitle}>🎁 현재 뽑을 수 있는 상품들 🎁</div>
-      <div className={styles.couponListContainer}>
+      <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
+        <button onClick={scrollLeftClick} style={{ position: 'absolute', left: '-15px', zIndex: 10, background: 'var(--glass-strong)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--primary)', boxShadow: '0 4px 10px var(--shadow-color)' }}>◀</button>
+        <div 
+          className={styles.couponListContainer}
+          ref={scrollRef}
+          onMouseDown={startDrag}
+          onMouseLeave={stopDrag}
+          onMouseUp={stopDrag}
+          onMouseMove={onDrag}
+          style={{ cursor: isDraggingList ? 'grabbing' : 'grab', padding: '10px 20px 15px 20px' }}
+        >
         {items.filter(item => item.title !== '꽝').length === 0 ? <p className={styles.emptyText}>{MESSAGES.DRAW.EMPTY_ITEMS}</p> : items.filter(item => item.title !== '꽝').map(item => (
           <div key={item.id} className={styles.couponItem}>
             <div className={styles.couponItemIcon}>{renderIcon(item.icon, 'list')}</div>
             <div className={styles.couponItemTitle}>{item.title}</div>
           </div>
         ))}
+        </div>
+        <button onClick={scrollRightClick} style={{ position: 'absolute', right: '-15px', zIndex: 10, background: 'var(--glass-strong)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--primary)', boxShadow: '0 4px 10px var(--shadow-color)' }}>▶</button>
       </div>
 
       <div className={styles.linksContainer}>

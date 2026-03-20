@@ -25,7 +25,7 @@ export async function POST(request) {
   try {
     const { icon, title, description } = await request.json();
     
-    if (!icon || !title || !description) {
+    if (!icon || !title) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 

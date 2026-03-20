@@ -13,9 +13,11 @@ export default function Admin() {
   const [passwordInput, setPasswordInput] = useState("");
   const [historyPage, setHistoryPage] = useState(1);
 
+  const [newItemInputType, setNewItemInputType] = useState('image');
   const [newItemIcon, setNewItemIcon] = useState('');
   const [newItemTitle, setNewItemTitle] = useState('');
   const [newItemDesc, setNewItemDesc] = useState('');
+  const [adminErrorMsg, setAdminErrorMsg] = useState('');
 
   const renderIcon = (iconStr) => {
     if (iconStr && iconStr.startsWith('data:image')) {
@@ -94,7 +96,11 @@ export default function Admin() {
 
   const handleAddItem = async (e) => {
     e.preventDefault();
-    if (!newItemTitle) return alert("상품 이름을 입력해주세요");
+    setAdminErrorMsg('');
+    if (newItemInputType === 'image' && !newItemIcon) return setAdminErrorMsg("⚠️ 상품 이미지를 업로드해주세요.");
+    if (newItemInputType === 'emoji' && !newItemIcon) return setAdminErrorMsg("⚠️ 상품 이모지를 입력해주세요.");
+    if (!newItemTitle.trim()) return setAdminErrorMsg("⚠️ 상품 이름을 입력해주세요.");
+    
     const res = await fetch('/api/admin/add-item', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -105,6 +111,10 @@ export default function Admin() {
       setNewItemIcon('');
       setNewItemTitle('');
       setNewItemDesc('');
+      if (newItemInputType === 'image') {
+        const fileInput = document.getElementById('adminFileInput');
+        if (fileInput) fileInput.value = '';
+      }
       fetchData();
     } else {
       alert("상품 추가에 실패했습니다.");
@@ -173,12 +183,31 @@ export default function Admin() {
         <div className={styles.glassCard}>
           <h2>⚙️ 새 상품 직접 추가</h2>
           <form onSubmit={handleAddItem} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+            {adminErrorMsg && <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.9rem' }}>{adminErrorMsg}</div>}
+            <div style={{ display: 'flex', gap: '10px' }}>
+               <button type="button" onClick={() => { setNewItemInputType('image'); setNewItemIcon(''); }} className={styles.btn} style={{ flex: 1, padding: '8px', backgroundColor: newItemInputType === 'image' ? 'var(--primary)' : '#ccc' }}>이미지</button>
+               <button type="button" onClick={() => { setNewItemInputType('emoji'); setNewItemIcon(''); }} className={styles.btn} style={{ flex: 1, padding: '8px', backgroundColor: newItemInputType === 'emoji' ? 'var(--primary)' : '#ccc' }}>이모지</button>
+            </div>
+            
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-               <label>상품 이미지 (필수)</label>
-               <input 
-                 type="file" accept="image/*" onChange={handleImageUpload}
-                 style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
-               />
+               {newItemInputType === 'image' ? (
+                 <>
+                   <label>상품 이미지 (필수)</label>
+                   <input 
+                     id="adminFileInput" type="file" accept="image/*" onChange={handleImageUpload}
+                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)' }}
+                   />
+                 </>
+               ) : (
+                 <>
+                   <label>상품 이모지 (필수)</label>
+                   <input 
+                     value={newItemIcon} onChange={e => setNewItemIcon(e.target.value)} maxLength={2} placeholder="" 
+                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.8)', fontSize: '1.5rem', textAlign: 'center' }} 
+                   />
+                 </>
+               )}
+               
                {newItemIcon && newItemIcon.startsWith('data:image') && (
                  <img src={newItemIcon} alt="preview" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px' }} />
                )}
