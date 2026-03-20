@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           Int      @id @default(1)
+  coinsBalance Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Item {
+  id          Int       @id @default(autoincrement())
+  icon        String
+  title       String
+  description String
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  histories   History[]
+}
+
+model History {
+  id      Int      @id @default(autoincrement())
+  itemId  Int
+  item    Item     @relation(fields: [itemId], references: [id])
+  drawnAt DateTime @default(now())
+}
