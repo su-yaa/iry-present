@@ -24,6 +24,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Copy standalone output
 COPY --from=builder /app/.next/standalone ./
@@ -41,4 +42,4 @@ RUN mkdir -p /app/prisma
 EXPOSE 3000
 
 # Run migrations and start server
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node server.js"]
+CMD ["sh", "-c", "npx -y prisma@6.19.2 db push --accept-data-loss && node server.js"]
