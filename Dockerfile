@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
 RUN npm ci
+ENV DATABASE_URL="file:./dev.db"
 RUN npx prisma generate
 
 # ---- Stage 2: Build ----
@@ -15,6 +16,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ENV DATABASE_URL="file:./dev.db"
 RUN npx prisma generate
 RUN npm run build
 
@@ -25,6 +27,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV DATABASE_URL="file:/app/data/dev.db"
 
 # Copy standalone output
 COPY --from=builder /app/.next/standalone ./
@@ -38,6 +41,7 @@ COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
 
 # Create DB directory and init DB on start
 RUN mkdir -p /app/prisma
+RUN mkdir -p /app/data
 
 EXPOSE 3000
 
