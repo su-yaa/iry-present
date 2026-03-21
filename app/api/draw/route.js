@@ -19,7 +19,17 @@ export async function POST() {
       data: { coinsBalance: { decrement: 1 } }
     });
 
-    const randomItem = items[Math.floor(Math.random() * items.length)];
+    const totalWeight = items.reduce((sum, item) => sum + item.probability, 0);
+    let randomNum = Math.random() * totalWeight;
+    let randomItem = items[0];
+
+    for (const item of items) {
+      if (randomNum < item.probability) {
+        randomItem = item;
+        break;
+      }
+      randomNum -= item.probability;
+    }
 
     await prisma.history.create({
       data: { itemId: randomItem.id }

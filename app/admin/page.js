@@ -151,6 +151,26 @@ export default function Admin() {
     }
   };
 
+  const handleSaveAllWeights = async () => {
+    const totalWeight = approvedItems.reduce((sum, item) => sum + (parseInt(item.probability, 10) || 0), 0);
+    if (totalWeight !== 100) {
+      alert(`⚠️ 모든 상품의 가중치 합은 정확히 100이어야 합니다.\n(현재 총합: ${totalWeight})`);
+      return;
+    }
+
+    try {
+      await Promise.all(approvedItems.map(item => fetch('/api/admin/items', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id, probability: parseInt(item.probability, 10) || 0 })
+      })));
+      alert("모든 가중치가 성공적으로 저장되었습니다!");
+      fetchData();
+    } catch (e) {
+      alert("저장 중 오류가 발생했습니다.");
+    }
+  };
+
   if (!auth) {
     return (
       <div className={styles.loginCard}>
@@ -240,7 +260,18 @@ export default function Admin() {
 
       <section className={styles.section}>
         <div className={styles.glassCard}>
-          <h2>🛍️ 등록된 상품 관리</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <h2 style={{ margin: 0 }}>🛍️ 등록된 상품 관리</h2>
+            {approvedItems.length > 0 && (
+              <button 
+                onClick={handleSaveAllWeights} 
+                className={`${styles.btn} ${styles.btnPink}`} 
+                style={{ padding: '6px 12px', fontSize: '0.9rem' }}
+              >
+                가중치 100에 맞춰 일괄 저장
+              </button>
+            )}
+          </div>
           {approvedItems.length === 0 ? <p className={styles.emptyText}>등록된 상품이 없습니다.</p> : (
             approvedItems.map(item => (
               <div key={item.id} className={styles.pendingItem} style={{ borderLeft: '4px solid #10b981' }}>
@@ -251,7 +282,22 @@ export default function Admin() {
                     <div className={styles.pendingDesc}>{item.description}</div>
                   </div>
                 </div>
-                <div className={styles.pendingActions}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: '5px' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>당첨 가중치</span>
+                    <input 
+                      type="number" 
+                      min="0"
+                      value={item.probability ?? 1}
+                      onChange={(e) => {
+                        const newItems = [...approvedItems];
+                        const idx = newItems.findIndex(i => i.id === item.id);
+                        newItems[idx] = { ...newItems[idx], probability: e.target.value };
+                        setApprovedItems(newItems);
+                      }}
+                      style={{ width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid var(--glass-border)', textAlign: 'center', background: 'var(--glass-light)', fontWeight: 'bold' }}
+                    />
+                  </div>
                   {item.title !== '꽝' && (
                     <button onClick={() => handleDeleteItem(item.id)} className={`${styles.btn} ${styles.btnRed}`}>삭제</button>
                   )}
@@ -285,7 +331,33 @@ export default function Admin() {
 
       <section className={styles.section}>
         <div className={styles.glassCard}>
-          <h2>🕵️ 이리 당첨 기록</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <h2 style={{ margin: 0 }}>🕵️ 이리 당첨 기록</h2>
+            {history.length > 0 && (
+              <button 
+                onClick={async () => {
+                  if (window.confirm("정말로 모든 당첨 기록을 삭제하시겠습니까?")) {
+                    const res = await fetch('/api/admin/history', {
+                      method: 'DELETE',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ id: 'all' })
+                    });
+                    if (res.ok) {
+                      alert("모든 기록이 삭제되었습니다.");
+                      setHistoryPage(1);
+                      fetchData();
+                    } else {
+                      alert("기록 삭제 실패");
+                    }
+                  }
+                }}
+                className={`${styles.btn} ${styles.btnRed}`} 
+                style={{ padding: '6px 12px', fontSize: '0.9rem' }}
+              >
+                전체 기록 삭제
+              </button>
+            )}
+          </div>
           {history.length === 0 ? <p className={styles.emptyText}>{MESSAGES.ADMIN.EMPTY_HISTORY}</p> : (
             <>
               {history.slice((historyPage - 1) * 10, historyPage * 10).map(h => (

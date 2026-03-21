@@ -25,3 +25,21 @@ export async function DELETE(request) {
     return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 });
   }
 }
+
+export async function PUT(request) {
+  try {
+    const { id, probability } = await request.json();
+    if (!id || probability === undefined) {
+      return NextResponse.json({ error: 'Missing item ID or probability' }, { status: 400 });
+    }
+    
+    await prisma.item.update({ 
+      where: { id },
+      data: { probability: parseInt(probability, 10) }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update item' }, { status: 500 });
+  }
+}

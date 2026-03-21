@@ -20,7 +20,11 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Missing history ID' }, { status: 400 });
     }
     
-    await prisma.history.delete({ where: { id } });
+    if (id === 'all') {
+      await prisma.history.deleteMany({});
+    } else {
+      await prisma.history.delete({ where: { id } });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
